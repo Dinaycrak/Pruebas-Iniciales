@@ -1,15 +1,15 @@
 import streamlit as st
 from dotenv import load_dotenv
+
+# Fuerza a python-dotenv a cargar el archivo .env desde la raíz
+load_dotenv(override=True)
+
 from agentes.agente_1 import AgenteUno
 from agentes.agente_2 import AgenteDos
-
-# Carga la API key desde el archivo .env
-load_dotenv()
 
 st.set_page_config(page_title="Sistema Multi-Agente", layout="wide")
 st.title("Interfaz Multi-Agente Interconectada")
 
-# Instancia individual de cada agente
 agente_1 = AgenteUno()
 agente_2 = AgenteDos()
 
