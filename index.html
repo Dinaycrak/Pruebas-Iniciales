@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plataforma Multi-Agente IA</title>
+    <link rel="stylesheet" href="src/css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Sistema Multi-Agente Interconectado</h1>
+        
+        <div class="control-panel">
+            <label for="agentMode">Selecciona el Modo de Ejecución:</label>
+            <select id="agentMode">
+                <optgroup label="Agentes Individuales">
+                    <option value="individual_gemini">Agente Gemini AI</option>
+                    <option value="individual_chatgpt">Agente ChatGPT (OpenAI)</option>
+                </optgroup>
+                <optgroup label="Flujos Interconectados">
+                    <option value="gemini_to_chatgpt">Gemini ➔ ChatGPT (Analiza y Mejora ChatGPT)</option>
+                    <option value="chatgpt_to_gemini">ChatGPT ➔ Gemini (Analiza y Mejora Gemini)</option>
+                </optgroup>
+            </select>
+        </div>
+
+        <div class="input-section">
+            <textarea id="promptInput" placeholder="Escribe tu consulta aquí..."></textarea>
+            <button id="sendBtn" onclick="enviarConsulta()">Enviar a los Agentes</button>
+        </div>
+
+        <div class="response-section">
+            <h3>Estado / Salida:</h3>
+            <div id="statusBadge" class="badge">En espera...</div>
+            <div id="outputResponse" class="output-box"></div>
+        </div>
+    </div>
+
+    <script src="src/scripts/app.js"></script>
+</body>
+</html>
