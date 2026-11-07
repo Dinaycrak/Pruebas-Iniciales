@@ -1,18 +1,27 @@
+import sys
+from pathlib import Path
+
+# Agregar dinámicamente la raíz del proyecto a sys.path
+ROOT_DIR = Path(__file__).resolve().parent.parent.parent
+if str(ROOT_DIR) not in sys.path:
+    sys.path.insert(0, str(ROOT_DIR))
+
 import os
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi.staticfiles import StaticFiles
-from pydantic import BaseModel
 from dotenv import load_dotenv
 
-load_dotenv()
+# Cargar variables de entorno del archivo .env
+load_dotenv(override=True)
+
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
 
 from src.backend.agentes.agente_gemini import AgenteGemini
 from src.backend.agentes.agente_openai import AgenteOpenAI
 
 app = FastAPI()
 
-# Configuración de CORS
+# Permite peticiones CORS desde GitHub Pages y entorno local
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -26,24 +35,21 @@ openai_agent = AgenteOpenAI()
 
 class ChatRequest(BaseModel):
     prompt: str
-    mode: str  # 'individual_gemini', 'individual_chatgpt', 'gemini_to_chatgpt', 'chatgpt_to_gemini'
+    mode: str
 
 @app.post("/api/chat")
 async def chat_endpoint(request: ChatRequest):
     modo = request.mode
     user_prompt = request.prompt
 
-    # 1. Agente Individual Gemini
     if modo == "individual_gemini":
         resultado = gemini_agent.procesar(user_prompt)
         return {"agente_usado": "Gemini (Individual)", "respuesta": resultado}
 
-    # 2. Agente Individual ChatGPT
     elif modo == "individual_chatgpt":
         resultado = openai_agent.procesar(user_prompt)
         return {"agente_usado": "ChatGPT (Individual)", "respuesta": resultado}
 
-    # 3. Flujo Interconectado: Gemini -> ChatGPT (ChatGPT analiza y mejora)
     elif modo == "gemini_to_chatgpt":
         salida_gemini = gemini_agent.procesar(user_prompt)
         prompt_mejora = f"Analiza la siguiente respuesta generada por Gemini. Mejora la precisión, los datos y corrige cualquier detalle necesario:\n\n{salida_gemini}"
@@ -53,7 +59,6 @@ async def chat_endpoint(request: ChatRequest):
             "respuesta": resultado_final
         }
 
-    # 4. Flujo Interconectado: ChatGPT -> Gemini (Gemini analiza y mejora)
     elif modo == "chatgpt_to_gemini":
         salida_chatgpt = openai_agent.procesar(user_prompt)
         prompt_mejora = f"Analiza la siguiente respuesta generada por ChatGPT. Mejora la precisión, los datos y corrige cualquier detalle necesario:\n\n{salida_chatgpt}"
@@ -64,7 +69,3 @@ async def chat_endpoint(request: ChatRequest):
         }
 
     return {"error": "Modo de ejecución no reconocido"}
-
-# Permite servir el index.html y la carpeta src/ en servidor local
-app.mount("/src", StaticFiles(directory="src"), name="src")
-app.mount("/", StaticFiles(directory=".", html=True), name="root")
