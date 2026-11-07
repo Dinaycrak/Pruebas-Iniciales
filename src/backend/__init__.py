@@ -1,4 +1,3 @@
 """
-Paquete Backend para el Sistema Multi-Agente (FastAPI + Agentes).
+Paquete Backend para la API del Sistema Multi-Agente (FastAPI).
 """
-__version__ = "1.0.0"

@@ -1,10 +1,9 @@
 """
 Módulo de Agentes de Inteligencia Artificial.
-Exporta las clases de los agentes individuales para fácil acceso.
+Exporta las clases de los agentes para fácil importación en el backend.
 """
 
 from .agente_gemini import AgenteGemini
 from .agente_openai import AgenteOpenAI
 
-# Define qué clases se exportan públicamente al hacer: from agentes import *
 __all__ = ["AgenteGemini", "AgenteOpenAI"]
